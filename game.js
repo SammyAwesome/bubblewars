@@ -601,7 +601,7 @@ function onTick(){
 		detectCollision()
 		fireDelay()
 		if(randomInteger(0,2) == 1){
-			if(totalBots < 100){
+			if(totalFoold < 100){
 				insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"foold", size:20})
 			}
 		}
