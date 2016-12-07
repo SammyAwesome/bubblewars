@@ -22,12 +22,12 @@ var blueP = 0
 var lock = loadImage("lock.png")
 var totalBots = 0
 var gun1 = {delay:8,dmg:10,cooldown:0,typez:"gun"}
-var gun3 = {delay:90,dmg:100,cooldown:0,typez:"gun"}
+var gun3 = {delay:90,dmg:200,cooldown:0,typez:"gun"}
 var gun2 = {delay:1,dmg:2, cooldown:0,typez:"gun"}
 var skin1 = {typez:"skin",skin:skin1}
 var skin2 = {typez:"skin", skin:skin2}
 var skin3 = {typez:"skin",skin:skin3}
-
+var totalFoold = 0
 var playerGun = "standard"
 var unusefulDelayVar = 8
 var shops = [{x:150,y:30,width:100,height:50,label:"< BACK",font:14}] 
@@ -280,8 +280,8 @@ function drawMovies(){
 			fillCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y),(m.size), makeColor(m.r, m.g, 0))
 			break;
 		case "botTACK":
-			m.x = m.x + cos(m.t) *50 * .73
-			m.y = m.y - sin(m.t) * 50 * .73
+			m.x = m.x + cos(m.t) *50 
+			m.y = m.y - sin(m.t) * 50
 			
 			fillTransformedTriangle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y), makeColor(.5, .5, .5), m.size,  m.t)
 			break;
@@ -304,8 +304,8 @@ function drawMovies(){
 			//if's are for border
 			if(speedBoost == true){
 				zoom = 3
-				if(randomInteger(0,10) == 9){
-					movies[0].size = movies[0].size * .985
+				if(randomInteger(0,1) == 1){
+					movies[0].size = movies[0].size * .995
 				}
 			} else{
 				zoom = 1
@@ -534,6 +534,9 @@ function botCounter(){
 		if(movies[k].type == "bot"){
 			totalBots++
 		}
+		if(movies[k].type == "foold"){
+			totalFoold++
+		}
 		
 	}
 }
@@ -580,7 +583,7 @@ function onTick(){
 		fillText("COINS: " + localStorage.coins, screenWidth / 2 + 500, button1y + 50, makeColor(0, 0, 0), "49pt Baloo Bhaina", "center", "middle")
 		
 	}
-	if(movies[0].size < 45){
+	if(movies[0].size < 100){
 		speedBoost = false
 	}
 	if(mode == "ingame"){
@@ -595,12 +598,15 @@ function onTick(){
 		detectCollision()
 		fireDelay()
 		if(randomInteger(0,2) == 1){
-			insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"foold", size:20})
+			if(totalBots < 100){
+				insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"foold", size:20})
+			}
 		}
 		if(randomInteger(0,10) == 7){
 			insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"fooldBad", size:20})
 		}
 		if(randomInteger(0,50) == 12){
+			
 			insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"fooldHP", size:20})
 		}
 		if(randomInteger(0,50) == 17){
