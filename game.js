@@ -220,6 +220,9 @@ function onKeyStart(key){
 		console.log(botcount, fooldcount, fooldHPcount, fooldBadcount, tackscount)
 		
 	}
+	if (key == 27) {
+		movies[0].hp = 0
+	}
 	
 
 }
