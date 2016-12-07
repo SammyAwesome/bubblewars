@@ -135,7 +135,7 @@
             // We can't allow the script tag itself to appear as a string in the source
             // code, so this is broken across multiple strings.
 
-            document.write('<scr' + 'ipt src="' + url + '?refresh=1" charset="UTF-8" type="text/javascript"></scr' + 'ipt>'); 
+            document.write('<scr' + 'ipt src="' + url + '" charset="UTF-8" type="text/javascript"></scr' + 'ipt>'); 
 
             // Assume success
             _ch_sourceURL = url;
