@@ -19,6 +19,7 @@ var button2y = screenHeight / 2 + 50
 var button2h = 100
 var button2w = 200
 var blueP = 0
+var slideShop = 0
 var lock = loadImage("lock.png")
 var totalBots = 0
 var gun1 = {delay:8,dmg:10,cooldown:0,typez:"gun"}
@@ -31,9 +32,9 @@ var totalFoold = 0
 var playerGun = "standard"
 var unusefulDelayVar = 8
 var shops = [{x:150,y:30,width:100,height:50,label:"< BACK",font:14}] 
-for(var w = 0; w<6; w++){
+for(var w = 0; w<12; w++){
 	var c = w%3
-	var r = floor(w/3)
+	var r = floor((w%6)/3)
 	hspace = (screenWidth - 1200)/4
 	vspace = (screenHeight - 800)/3
 	insertBack(shops, ({x:(c+1)*hspace + c*400, y:(r+1)*vspace+r*400, width:400, height:400,font:40}))
@@ -60,6 +61,24 @@ shops[5].purchased = false
 shops[6].label = "tri"
 shops[6].price = 100000
 shops[6].purchased = false
+shops[7].label = "tri"
+shops[7].price = 100000
+shops[7].purchased = false
+shops[8].label = "tri"
+shops[8].price = 100000
+shops[8].purchased = false
+shops[9].label = "tri"
+shops[9].price = 100000
+shops[9].purchased = false
+shops[10].label = "tri"
+shops[10].price = 100000
+shops[10].purchased = false
+shops[11].label = "tri"
+shops[11].price = 100000
+shops[11].purchased = false
+shops[12].label = "tri"
+shops[12].price = 100000
+shops[12].purchased = false
 //Do or do not, there is no TRI!
 shops[1].item = gun1
 shops[2].item = gun2
@@ -67,6 +86,12 @@ shops[3].item = gun3
 shops[4].item = skin1
 shops[5].item = skin2
 shops[6].item = skin3
+shops[7].item = gun2
+shops[8].item = gun2
+shops[9].item = gun2
+shops[10].item = gun2
+shops[11].item = gun2
+shops[12].item = gun2
 if(!localStorage.getItem("coins")){
 	localStorage.coins = 0
 	
@@ -79,7 +104,12 @@ function onTouchStart(x, y){
 			mode = "home"
 			
 		}
-		for(var i = 1; i < shops.length; i++){
+		if(x > screenWidth - 220 && x < screenWidth - 90 && y > screenHeight -160&& y <screenHeight - 40){
+			slideShop = 1
+		}
+		//fillRectangle(screenWidth - 220, screenHeight - 160, 130,120,makeColor(.92,.95,.7),20)
+		
+		for(var i = slideShop*6 +1; i < (slideShop+1)*6 + 1; i++){
 			if(x > shops[i].x && x < shops[i].x + shops[i].width && y > shops[i].y && y < shops[i].y + shops[i].height){
 				
 				if(shops[i].item != movies[0].gun){
@@ -175,6 +205,9 @@ function onWheel(x,y,dx,dy){
 	
 }
 function onKeyStart(key){
+	if(key == 27){
+		mode = "home"
+	}
 	if(key == 90){
 	//	int c = -1
 	//	for(var i = 0; i < movies.length; i++){
@@ -184,6 +217,19 @@ function onKeyStart(key){
 	//			}else if(movies[c])
 	//		}
 	//	}
+	}
+	if(key == 39){
+		if(mode == "shop"){
+			if(slideShop<1)
+			slideShop++
+		}
+		
+	}
+	if(key == 37){
+		if(mode == "shop"){
+			if(slideShop>0)
+			slideShop--
+		}
 	}
 	if(key == 32){
 		if(movies[0].size > 45){
@@ -551,8 +597,11 @@ function onTick(){
 		fillRectangle(0,0, screenWidth, screenHeight, makeColor(.5, .8,  .1))
 		strokeRectangle(0,0, screenWidth, screenHeight, makeColor(0,.3,.15), 30,0)
 		fillRectangle(screenWidth - 570, 30, 500, 70, makeColor(.92,.95,.7), 50)
+		//fillPolygon(screenWidth - 200, screenHeight - 200, screenWidth - 200, screenHeight - 100, screenWidth - 100, screenHeight - 150, makeColor(1,1,1))
+
 		fillText("Coins: " + localStorage.coins, screenWidth - 550, 80, makeColor(0,0,0), shops[2].font - 5+"pt Baloo Bhaina")
-		for(var i = 0; i < shops.length; i++){
+		
+		for(var i = slideShop*6 +1; i < (slideShop+1)*6 + 1; i++){
 			
 			if(shops[i].purchased == false){
 				fillRectangle(shops[i].x,shops[i].y,shops[i].width,shops[i].height, makeColor(.72,.75,.5),30)
@@ -570,13 +619,14 @@ function onTick(){
 				strokeRectangle(shops[i].x,shops[i].y,shops[5].width, shops[5].height, makeColor(0,.3,.1),15,30)
 			}
 		}
+		fillRectangle(screenWidth - 220, screenHeight - 160, 130,120,makeColor(.92,.95,.7),20)
+		fillPolygon([screenWidth - 200, screenHeight - 150, screenWidth - 200, screenHeight - 50, screenWidth - 100, screenHeight - 100], makeColor(0,.3,.1))
 		
 	}
 	if(mode == "home"){
 		
 		
 		fillRectangle(0,0, screenWidth, screenHeight, makeColor(.5,.8,1))
-		
 		fillRectangle(button1x, button1y, button1w, button1h, makeColor(0,.7,0), 50)
 		fillText("Bubble Wars", screenWidth / 2, screenHeight / 2, makeColor(1, 1, 1), "158pt Baloo Bhaina", "center")
 		fillText("PLAY!", button1x + button1w / 2, button1y - 25, makeColor(1, 1, 1), "58pt Baloo Bhaina", "center", "top")
