@@ -5,9 +5,11 @@ var pi = 3.1415926535897932384626433
 var movies
 var triSize = 1
 var speedBoost = false
+
 var zoom = 1
 var rotate = 0
 var rotatez = 0
+var timeCool = 0
 var cons = true
 var botCount = 0
 var button1x = screenWidth / 2 - 200
@@ -22,12 +24,28 @@ var blueP = 0
 var slideShop = 0
 var lock = loadImage("lock.png")
 var totalBots = 0
+//
+var firingMode = "reloaded"
+//
 var gun1 = {delay:8,dmg:10,cooldown:0,typez:"gun"}
 var gun3 = {delay:90,dmg:200,cooldown:0,typez:"gun"}
-var gun2 = {delay:1,dmg:2, cooldown:0,typez:"gun"}
-var skin1 = {typez:"skin",skin:skin1}
-var skin2 = {typez:"skin", skin:skin2}
-var skin3 = {typez:"skin",skin:skin3}
+var gun2 = {delay:2,dmg:4, cooldown:0,typez:"gun"}
+var gun4 = {delay:15,dmg:30,cooldown:0,typez:"gun"}
+var gun5 = {delay:1,dmg:30,cooldown:50,shottime:200,typez:"gun"}
+var gun6 = {delay:100, dmg:500, cooldown:0,typez:"gun"}
+
+var skin1 = {typez:"skin"}
+//earth
+var skin2 = {typez:"skin"}
+//WATER
+var skin3 = {typez:"skin"}
+//FIRE
+var skin4 = {typez:"skin"}
+//Metal
+var skin5 = {typez:"skin"}
+//Air
+var skin6 = {typez:"skin"}
+//MAGIC
 var totalFoold = 0
 var playerGun = "standard"
 var unusefulDelayVar = 8
@@ -40,44 +58,44 @@ for(var w = 0; w<12; w++){
 	insertBack(shops, ({x:(c+1)*hspace + c*400, y:(r+1)*vspace+r*400, width:400, height:400,font:40}))
 	
 }
-shops[1].label = "Standard Gun"
+shops[1].label = "STANDARD"
 shops[1].price = 0
 shops[1].purchased = true
-shops[2].label = "Machine Gun"
+shops[2].label = "MACHINE GUN"
 shops[2].price = 50000
 shops[2].purchased = false
-shops[3].label = "Cannon"
+shops[3].label = "CANNON"
 shops[3].price = 100000
 shops[3].purchased = false
-shops[4].label = "Standard Skin"
+shops[4].label = "EARTH"
 
 //Well rounded skin!
 shops[4].price = 0
 shops[4].puchased = true
-shops[5].label = "too boooring"
+shops[5].label = "WATER"
 shops[5].price = 50000
 shops[5].purchased = false
 //It's really hot outside, 90º!
-shops[6].label = "tri"
+shops[6].label = "FIRE"
 shops[6].price = 100000
 shops[6].purchased = false
-shops[7].label = "tri"
-shops[7].price = 100000
+shops[7].label = "SNIPER"
+shops[7].price = 150000
 shops[7].purchased = false
-shops[8].label = "tri"
-shops[8].price = 100000
+shops[8].label = "LASER"
+shops[8].price = 300000
 shops[8].purchased = false
-shops[9].label = "tri"
-shops[9].price = 100000
+shops[9].label = "NUKE"
+shops[9].price = 1000000
 shops[9].purchased = false
-shops[10].label = "tri"
-shops[10].price = 100000
+shops[10].label = "METAL"
+shops[10].price = 150000
 shops[10].purchased = false
-shops[11].label = "tri"
-shops[11].price = 100000
+shops[11].label = "AIR"
+shops[11].price = 300000
 shops[11].purchased = false
-shops[12].label = "tri"
-shops[12].price = 100000
+shops[12].label = "MAGIC"
+shops[12].price = 1000000
 shops[12].purchased = false
 //Do or do not, there is no TRI!
 shops[1].item = gun1
@@ -86,12 +104,12 @@ shops[3].item = gun3
 shops[4].item = skin1
 shops[5].item = skin2
 shops[6].item = skin3
-shops[7].item = gun2
-shops[8].item = gun2
-shops[9].item = gun2
-shops[10].item = gun2
-shops[11].item = gun2
-shops[12].item = gun2
+shops[7].item = gun4
+shops[8].item = gun5
+shops[9].item = gun6
+shops[10].item = skin4
+shops[11].item = skin5
+shops[12].item = skin6
 if(!localStorage.getItem("coins")){
 	localStorage.coins = 0
 	
@@ -341,7 +359,7 @@ function drawMovies(){
 			fillCircle(screenWidth / 2, screenHeight / 2, movies[0].size, makeColor(movies[0].r, movies[0].g, blueP))
 			if(movies[0].skin==skin2){
 				fillRectangle(screenWidth / 2 - movies[0].size/sqrt(2), screenHeight / 2 - movies[0].size/sqrt(2), sqrt(2)*(movies[0].size),sqrt(2)*(movies[0].size), makeColor(.5,.5,.5))
-			}else if(movies[0].skin==skin3){
+			}else if(movies[0].skin==skin6){
 				fillTransformedTriangle(screenWidth / 2, screenHeight / 2, makeColor(.5,.5,.5), movies[0].size, rotate)
 				fillTransformedTriangle(screenWidth / 2, screenHeight / 2, makeColor(.2,.2,.2), movies[0].size, rotatez)
 				
@@ -569,13 +587,16 @@ function coinConvertor(){
 	return parseInt(localStorage.coins)
 }
 function playerFire(){
-	if(movies[0].delay>movies[0].gun.delay-1){
-		if(cons == true){
-			
-			insertBack(movies, {x:movies[0].x, y:movies[0].y, t:Theta(), type:"tack", size:10})
-			movies[0].delay = 0
+	if(firingMode == "reloaded"){
+		if(movies[0].delay>movies[0].gun.delay-1){
+			if(cons == true){
+				firingMode = "shooting"
+				insertBack(movies, {x:movies[0].x, y:movies[0].y, t:Theta(), type:"tack", size:10})
+				movies[0].delay = 0
+			}
 		}
 	}
+	
 }
 function botCounter(){
 	totalBots = 0
@@ -589,9 +610,25 @@ function botCounter(){
 		
 	}
 }
-
+function timerCooldown(){
+	if(firingMode == "cooldown"){
+		if(movies[0].gun.cooldown > timeCool){
+			timeCool++
+		}else{
+			timeCool = 0
+			firingMode = "reloaded"
+		}
+	}else if(firingMode == "shooting"){
+		if(movies[0].gun.shottime  > timeCool){
+			timeCool++
+		}else{
+			timeCool = 0
+			firingMode = "cooldown"
+		}
+	}
+}
 function onTick(){
-	
+	timerCooldown()
 	playerFire()
 	if(mode == "shop"){
 		fillRectangle(0,0, screenWidth, screenHeight, makeColor(.5, .8,  .1))
@@ -655,9 +692,9 @@ function onTick(){
 				insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"foold", size:20})
 			}
 		}
-		if(randomInteger(0,10) == 7){
-			insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"fooldBad", size:20})
-		}
+	//	if(randomInteger(0,10) == 7){
+	//		insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"fooldBad", size:20})
+	//	}
 		if(randomInteger(0,50) == 12){
 			
 			insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"fooldHP", size:20})
