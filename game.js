@@ -21,30 +21,37 @@ var button2y = screenHeight / 2 + 50
 var button2h = 100
 var button2w = 200
 var blueP = 0
+
+var score = 0
+var highscore = 0
+var kills = 0
+var mostkills = 0
+var coinsmade = 0
+
 var slideShop = 0
 var lock = loadImage("lock.png")
 var totalBots = 0
 //
 var firingMode = "reloaded"
 //
-var gun1 = {delay:8,dmg:10,cooldown:0,typez:"gun"}
-var gun3 = {delay:90,dmg:200,cooldown:0,typez:"gun"}
-var gun2 = {delay:2,dmg:4, cooldown:0,typez:"gun"}
-var gun4 = {delay:15,dmg:30,cooldown:0,typez:"gun"}
-var gun5 = {delay:1,dmg:30,cooldown:50,shottime:200,typez:"gun"}
-var gun6 = {delay:100, dmg:500, cooldown:0,typez:"gun"}
+var gun1 = {delay:8,dmg:10,cooldown:0,typez:"gun",labelg:"standard"}
+var gun3 = {delay:90,dmg:200,cooldown:0,typez:"gun",labelg:"cannon"}
+var gun2 = {delay:2,dmg:4, cooldown:0,typez:"gun",labelg:"machine gun"}
+var gun4 = {delay:15,dmg:30,cooldown:0,typez:"gun",labelg:"sniper"}
+var gun5 = {delay:1,dmg:10,cooldown:100,shottime:50,typez:"gun",labelg:"lazer"}
+var gun6 = {delay:100, dmg:500, cooldown:0,typez:"gun",labelg:"nuke"}
 
-var skin1 = {typez:"skin"}
+var skin1 = {typez:"skin",labelg:"earth"}
 //earth
-var skin2 = {typez:"skin"}
+var skin2 = {typez:"skin",labelg:"water"}
 //WATER
-var skin3 = {typez:"skin"}
+var skin3 = {typez:"skin",labelg:"fire"}
 //FIRE
-var skin4 = {typez:"skin"}
+var skin4 = {typez:"skin",labelg:"metal"}
 //Metal
-var skin5 = {typez:"skin"}
+var skin5 = {typez:"skin",labelg:"air"}
 //Air
-var skin6 = {typez:"skin"}
+var skin6 = {typez:"skin",labelg:"magic"}
 //MAGIC
 var totalFoold = 0
 var playerGun = "standard"
@@ -318,9 +325,17 @@ function drawMovies(){
 			fillCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y), 20, makeColor(.7, 0, 0))
 			break;
 		case "tack":
-			m.x = m.x + cos(m.t) * 50 * .73	
-			m.y = m.y - sin(m.t) * 50 * .73
-			fillTransformedTriangle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y), makeColor(.5, .5, .5), m.size, m.t)
+			console.log(movies[0].gun.labelg)
+			
+			if(movies[0].gun.labelg != "lazer"){
+				m.x = m.x + cos(m.t) * 50 * .73	
+				m.y = m.y - sin(m.t) * 50 * .73
+				fillTransformedTriangle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y), makeColor(.5, .5, .5), m.size, m.t)
+			}else{
+				m.x = m.x + cos(m.t) * 50 * .73	
+				m.y = m.y - sin(m.t) * 50 * .73
+				fillCircle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y),m.size + 5, makeColor(.8,.2,.2))
+			}
 			break;
 		case "bot":
 			botAI(m)
@@ -433,15 +448,17 @@ function detectCollision(){
 						if(m2.type == "foold" && (! m2.dead)){
 							m1.size = sqrt(pow(m1.size,2) + pow(m2.size,2))
 							m2.dead = true
-							localStorage.coins = coinConvertor() + 5
+							localStorage.coins = coinConvertor() + 10
+							coinsmade = coinsmade + 10
 						}
 						if(m2.type == "fooldHP" && (! m2.dead)){
 							if(movies[0].hp > 50){
 								movies[0].hp = 100
 								m2.dead = true
-								localStorage.coins = coinConvertor() + 10
+								localStorage.coins = coinConvertor() + 20
+								coinsmade = coinsmade + 20
 							}else{
-								movies[0].hp = movies[0].hp + 50
+								movies[0].hp = movies[0].hp + 33
 								m2.dead = true
 								
 							}
@@ -475,8 +492,9 @@ function detectCollision(){
 							m2.dead = true
 							if(m1.hp <= 0){
 								m1.dead = true
-								localStorage.coins = coinConvertor() + 200
-							
+								localStorage.coins = coinConvertor() + 500
+								coinsmade = coinsmade + 500
+								kills++
 								for(var i = 0; i < .4 * (m1.size); i++){
 									insertBack(movies, {x:m1.x + randomReal(-m1.size,m1.size), y:m1.y + randomReal(-m1.size,m1.size), type:"foold", size:20})
 									
@@ -587,12 +605,15 @@ function coinConvertor(){
 	return parseInt(localStorage.coins)
 }
 function playerFire(){
-	if(firingMode == "reloaded"){
+	if(firingMode == "shooting" || firingMode == "reloaded"){
 		if(movies[0].delay>movies[0].gun.delay-1){
 			if(cons == true){
-				firingMode = "shooting"
+				
 				insertBack(movies, {x:movies[0].x, y:movies[0].y, t:Theta(), type:"tack", size:10})
 				movies[0].delay = 0
+				if(firingMode == "reloaded"){
+					firingMode = "shooting"
+				}
 			}
 		}
 	}
@@ -628,8 +649,7 @@ function timerCooldown(){
 	}
 }
 function onTick(){
-	timerCooldown()
-	playerFire()
+	console.log(firingMode)
 	if(mode == "shop"){
 		fillRectangle(0,0, screenWidth, screenHeight, makeColor(.5, .8,  .1))
 		strokeRectangle(0,0, screenWidth, screenHeight, makeColor(0,.3,.15), 30,0)
@@ -671,6 +691,7 @@ function onTick(){
 		fillText("SHOP", button2x + button2w / 2, button2y - 10, makeColor(1, 1, 1), "49pt Baloo Bhaina", "center", "top")
 		fillRectangle(screenWidth / 2 + 350, button1y, 300, 100, makeColor(1, 1, 1), 30)
 		fillText("COINS: " + localStorage.coins, screenWidth / 2 + 500, button1y + 50, makeColor(0, 0, 0), "49pt Baloo Bhaina", "center", "middle")
+		//fillRectangle(mouseX, mouseY, 130,120,makeColor(.92,0,0),20)
 		
 	}
 	if(movies[0].size < 100){
@@ -678,15 +699,35 @@ function onTick(){
 	}
 	if(mode == "ingame"){
 		if(movies[0].hp <= 0){
+			
+			if(kills > mostkills){
+				mostkills = kills
+			}
+			kills = 0
+			if(score > highscore){
+				highscore = score
+			}
+			score = 0
+			coinsmade = 0
 			mode = "home"
 			start()
 		}
 		fillRectangle(0, 0, screenWidth, screenHeight, makeColor(.527, .804, .976))
+		timerCooldown()
+		playerFire()
 		botCounter()
 		drawMovies()
 		drawMiniMap()
 		detectCollision()
 		fireDelay()
+	
+		fillText("MOST KILLS " + mostkills, 100, 200, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+		fillText("KILLS " + kills, 100, 250, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+		
+		fillText("COINS EARNED: " + coinsmade, 100, screenHeight - 200, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+		fillText("GUN: " + movies[0].gun.labelg, 100, screenHeight - 150, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+		fillText("SKIN: " + movies[0].skin.labelg, 100, screenHeight - 100, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+		
 		if(randomInteger(0,2) == 1){
 			if(totalFoold < 100){
 				insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"foold", size:20})
