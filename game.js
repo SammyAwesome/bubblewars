@@ -5,7 +5,7 @@ var pi = 3.1415926535897932384626433
 var movies
 var triSize = 1
 var speedBoost = false
-
+var nukefound = false
 var zoom = 1
 var rotate = 0
 var rotatez = 0
@@ -21,7 +21,7 @@ var button2y = screenHeight / 2 + 50
 var button2h = 100
 var button2w = 200
 var blueP = 0
-
+var nukeMODEz = false
 var score = 0
 var highscore = 0
 var kills = 0
@@ -39,7 +39,7 @@ var gun3 = {delay:90,dmg:200,cooldown:0,typez:"gun",labelg:"cannon"}
 var gun2 = {delay:2,dmg:4, cooldown:0,typez:"gun",labelg:"machine gun"}
 var gun4 = {delay:15,dmg:30,cooldown:0,typez:"gun",labelg:"sniper"}
 var gun5 = {delay:1,dmg:10,cooldown:100,shottime:50,typez:"gun",labelg:"lazer"}
-var gun6 = {delay:100, dmg:500, cooldown:0,typez:"gun",labelg:"nuke"}
+var gun6 = {delay:600, dmg:0, cooldown:0,typez:"gun",labelg:"nuke"}
 
 var skin1 = {typez:"skin",labelg:"earth"}
 //earth
@@ -141,11 +141,11 @@ function onTouchStart(x, y){
 					if(shops[i].item.typez == "gun"){
 						if(shops[i].purchased == true){
 								movies[0].gun = shops[i].item
-								console.log("setting gun "+ i)
+						//		console.log("setting gun "+ i)
 						}else if(coinConvertor() >= shops[i].price){
 						
 								movies[0].gun = shops[i].item
-								console.log("setting gun "+ i)
+							//	console.log("setting gun "+ i)
 								shops[i].purchased = true
 								localStorage.coins = coinConvertor() - shops[i].price
 							
@@ -159,12 +159,12 @@ function onTouchStart(x, y){
 					if(shops[i].item.typez == "skin"){
 						if(shops[i].purchased == true){
 								movies[0].skin = shops[i].item
-								console.log("setting skin "+ i)
+						//		console.log("setting skin "+ i)
 						}else if(coinConvertor() >= shops[i].price){
 								movies[0].skin = shops[i].item
 								shops[i].purchased = true
 								localStorage.coins = coinConvertor() - shops[i].price
-								console.log("setting skin "+ i)
+						//		console.log("setting skin "+ i)
 					
 								
 									
@@ -197,12 +197,13 @@ function onTouchStart(x, y){
 function onTouchEnd(x, y){
 	if(mode=="ingame"){
 		cons = false
-		console.log("END")
+	//	console.log("END")
 	}
 }
 function start(){
 	movies = [{x:0,y:0,r:0,g:1,hp:100,size:45,type:"player",delay:30,gun:gun1,skin:skin1}]
 	speedBoost = false
+	nukefound = false
 	for(var i = 0; i < 1000; i++){
 		insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"foold", size:20})
 	
@@ -262,8 +263,15 @@ function onKeyStart(key){
 		}
 	}
 	if(key == 66){
-		insertBack(movies, {x:randomReal(-1000, 1000), y:randomReal(-1000, 1000), size:45, type:"bot", hp:100, r:0, g:1, angle:randomReal(0, 2 * pi), delay:0})
+		//insertBack(movies, {x:randomReal(-1000, 1000), y:randomReal(-1000, 1000), size:45, type:"bot", hp:100, r:0, g:1, angle:randomReal(0, 2 * pi), delay:0})
 		
+	}
+	if(key == 88){
+		if(movies[0].gun == gun6){
+			nukeMODEz = !nukeMODEz
+			
+			
+		}
 	}
 	if(key == 65){
 		var botcount = 0
@@ -288,7 +296,7 @@ function onKeyStart(key){
 				tackscount++
 			}
 		}
-		console.log(botcount, fooldcount, fooldHPcount, fooldBadcount, tackscount)
+	//	console.log(botcount, fooldcount, fooldHPcount, fooldBadcount, tackscount)
 		
 	}
 	if (key == 27) {
@@ -296,6 +304,51 @@ function onKeyStart(key){
 	}
 	
 
+
+}
+function nukeMODE(){
+	if(nukeMODEz == true){
+		var mmWidth = screenHeight
+		var mmHeight = screenHeight
+		fillRectangle(0,0,screenWidth,screenHeight,makeColor(0,0,0))
+		fillRectangle((screenWidth - mmWidth)/2, screenHeight - mmHeight, mmWidth, mmHeight, makeColor(.4 ,.7 ,.8))
+	//	strokeRectangle(screenWidth - mmWidth, screenHeight - mmHeight, mmWidth, mmHeight, makeColor(1,1,1), 5)
+	//	fillText("MiniMap", screenWidth - (mmWidth / 2), screenHeight - mmHeight, makeColor(1, 1, 1), "20pt sans-serif", "center", "bottom")
+		fillCircle((movies[0].x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -movies[0].y / (20000/mmWidth) + screenHeight - mmHeight / 2, 10, makeColor(.5, 0, .5))
+		for(var i = 0; i < movies.length; i++){
+			var m = movies[i] 
+			if(m.type == "bot"){
+				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 10, makeColor(m.r, m.g, 0))
+
+			}if(m.type == "foold"){
+				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 5, makeColor(1,1,1))
+
+			}if(m.type == "fooldHP"){
+				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 5, makeColor(0, .3,0))
+
+			}if(m.type == "fooldBad"){
+				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 5, makeColor(.7,0,0))
+
+			}if(m.type == "botTACK"){
+				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 1, makeColor(1,0,0))
+
+			}if(m.type == "nuke"){
+				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, m.size / (20000/mmWidth), makeColor(1,0,0))
+			}
+		}
+	}
+}
+function nuke(moviez, number){
+//	console.log(moviez)
+//	console.log(nukefound)
+	if(nukefound == true){
+		if(moviez.size < 4000){
+			moviez.size = moviez.size + 20
+		}else{
+			moviez.dead = true
+			removeAt(movies, number)
+		}
+	}
 }
 function onKeyEnd(key){
 	if(key == 32){
@@ -325,7 +378,7 @@ function drawMovies(){
 			fillCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y), 20, makeColor(.7, 0, 0))
 			break;
 		case "tack":
-			console.log(movies[0].gun.labelg)
+		//	console.log(movies[0].gun.labelg)
 			
 			if(movies[0].gun.labelg != "lazer"){
 				m.x = m.x + cos(m.t) * 50 * .73	
@@ -366,6 +419,12 @@ function drawMovies(){
 			m.y = m.y - sin(m.t) * 50
 			
 			fillTransformedTriangle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y), makeColor(.5, .5, .5), m.size,  m.t)
+			break;
+		case "nuke":
+			console.log(m)
+			nuke(m,i)
+			nukefound = true
+			fillCircle(screenWidth / 2 + (m.x-movies[0].x), screenHeight / 2 - (m.y - movies[0].y),m.size,makeColor(.8,.1,.1))
 			break;
 		case "player":
 			var angle = Theta()
@@ -463,6 +522,9 @@ function detectCollision(){
 								
 							}
 						}
+						if(m2.type == "nuke" && (!m2.dead)){
+							movies[0].hp = 0
+						}
 						if(m2.type == "fooldBad" && (! m2.dead)){
 							if(movies[0].hp < 10){
 								movies[0].hp = 0
@@ -504,6 +566,16 @@ function detectCollision(){
 						if(m2.type == "foold" && (! m2.dead)){
 							m1.size = sqrt(pow(m1.size,2) + pow(m2.size,2))
 							m2.dead = true
+						}
+						if(m2.type == "nuke" && (!m2.dead)){
+							m1.dead = true
+							localStorage.coins = coinConvertor() + 500
+							coinsmade = coinsmade + 500
+							kills++
+							for(var i = 0; i < .4 * (m1.size); i++){
+								insertBack(movies, {x:m1.x + randomReal(-m1.size,m1.size), y:m1.y + randomReal(-m1.size,m1.size), type:"foold", size:20})
+								
+							}
 						}
 					}
 				}
@@ -595,6 +667,8 @@ function drawMiniMap(){
 		}if(m.type == "botTACK"){
 			fillCircle(m.x / 50 + screenWidth - mmWidth / 2, -m.y / 50 + screenHeight - mmHeight / 2, 5, makeColor(1,0,0))
 			
+		}if(m.type == "nuke"){
+			fillCircle(m.x / 50 + screenWidth - mmWidth / 2, -m.y / 50 + screenHeight - mmHeight / 2, m.size / 50, makeColor(1,0,0))
 		}
 	}
 }
@@ -608,11 +682,20 @@ function playerFire(){
 	if(firingMode == "shooting" || firingMode == "reloaded"){
 		if(movies[0].delay>movies[0].gun.delay-1){
 			if(cons == true){
-				
-				insertBack(movies, {x:movies[0].x, y:movies[0].y, t:Theta(), type:"tack", size:10})
-				movies[0].delay = 0
-				if(firingMode == "reloaded"){
-					firingMode = "shooting"
+				if(nukeMODEz == false){
+						if(movies[0].gun != gun6){
+							insertBack(movies, {x:movies[0].x, y:movies[0].y, t:Theta(), type:"tack", size:10})
+							movies[0].delay = 0
+							if(firingMode == "reloaded"){
+								firingMode = "shooting"
+							}
+						}
+				}else{
+					if(mouseX > (screenWidth - screenHeight)/2 && mouseX < screenWidth - (screenWidth - screenHeight)/2){
+						movies[0].delay = 0
+						insertBack(movies,{x:(mouseX - (screenWidth - screenHeight)/2)*(20000/screenHeight) - 10000,y:-(mouseY *(20000/screenHeight)) + 10000,size:1000,type:"nuke"})
+						
+					}
 				}
 			}
 		}
@@ -649,7 +732,6 @@ function timerCooldown(){
 	}
 }
 function onTick(){
-	console.log(firingMode)
 	if(mode == "shop"){
 		fillRectangle(0,0, screenWidth, screenHeight, makeColor(.5, .8,  .1))
 		strokeRectangle(0,0, screenWidth, screenHeight, makeColor(0,.3,.15), 30,0)
@@ -692,7 +774,7 @@ function onTick(){
 		fillRectangle(screenWidth / 2 + 350, button1y, 300, 100, makeColor(1, 1, 1), 30)
 		fillText("COINS: " + localStorage.coins, screenWidth / 2 + 500, button1y + 50, makeColor(0, 0, 0), "49pt Baloo Bhaina", "center", "middle")
 		//fillRectangle(mouseX, mouseY, 130,120,makeColor(.92,0,0),20)
-		
+		fillText("Update 0.0.3", 200, screenHeight - 50, makeColor(1, 1, 1), "49pt Baloo Bhaina", "center", "middle")
 	}
 	if(movies[0].size < 100){
 		speedBoost = false
@@ -720,7 +802,40 @@ function onTick(){
 		drawMiniMap()
 		detectCollision()
 		fireDelay()
-	
+		if(nukeMODEz == true){
+			nukeMODE()
+			
+		}
+		if(movies[0].gun == gun5){
+			
+			if(firingMode == "reloaded"){
+				fc2 = 1
+				fc1 = 0
+				fc3 = 0
+			}else if(firingMode == "shooting"){
+				fc3 = 1
+				fc1 = 0
+				fc2 = 0
+				fillText("                      : "+ (movies[0].gun.shottime -timeCool) * 30 /1000, mouseX, mouseY, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+				
+			}else if(firingMode = "cooldown"){
+				fc1 = 1
+				fc2 = 0
+				fc3 = 0
+				fillText("                      : "+ (movies[0].gun.cooldown -timeCool) * 30 /1000, mouseX, mouseY, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+				
+			}
+			strokeCircle(mouseX+10,mouseY+10,20,makeColor(fc1,fc2,fc3),5)
+			fillText(firingMode, mouseX, mouseY, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+		}else if(movies[0].delay>movies[0].gun.delay-1){
+			strokeCircle(mouseX+10,mouseY+10,20,makeColor(0,1,0),5)
+			fillText("reloaded", mouseX, mouseY, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+		}else{
+			strokeCircle(mouseX+10,mouseY+10,20,makeColor(1,0,0),5)
+			fillText("reloading: "+ (movies[0].gun.delay-movies[0].delay) * 30 /1000, mouseX, mouseY, makeColor(1, 1, 1), "30pt Baloo Bhaina")
+		}
+		
+		
 		fillText("MOST KILLS " + mostkills, 100, 200, makeColor(1, 1, 1), "30pt Baloo Bhaina")
 		fillText("KILLS " + kills, 100, 250, makeColor(1, 1, 1), "30pt Baloo Bhaina")
 		
