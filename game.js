@@ -203,6 +203,7 @@ function onTouchEnd(x, y){
 function start(){
 	movies = [{x:0,y:0,r:0,g:1,hp:100,size:45,type:"player",delay:30,gun:gun1,skin:skin1}]
 	speedBoost = false
+	nukeMODEz = false
 	nukefound = false
 	for(var i = 0; i < 1000; i++){
 		insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"foold", size:20})
