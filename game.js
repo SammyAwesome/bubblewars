@@ -977,7 +977,7 @@ function onTick(){
 			
 		}
 		fillRectangle(0, 0, screenWidth, screenHeight, makeColor(.527, .804, .976))
-		strokeRectangle(screenWidth / 2 +(-11000 -movies[0].x), screenHeight / 2 - (11000 - movies[0].y), 20000, 20000, makeColor(.5,.5,.5), 2000, 20)
+		strokeRectangle(screenWidth / 2 +(-11000 -movies[0].x), screenHeight / 2 - (11000 - movies[0].y), 22000, 22000, makeColor(.5,.5,.5), 2000, 20)
 		
 		timerCooldown()
 		playerFire()
