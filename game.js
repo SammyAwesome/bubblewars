@@ -1,3 +1,4 @@
+var alert1 = false
 var mouseY = 0
 var mode = "home"
 var mouseX = 0
@@ -27,7 +28,7 @@ var highscore = 0
 var kills = 0
 var mostkills = 0
 var coinsmade = 0
-
+var played = false
 var slideShop = 0
 var lock = loadImage("lock.png")
 var totalBots = 0
@@ -40,7 +41,7 @@ var gun2 = {delay:2,dmg:4, cooldown:0,typez:"gun",labelg:"machine gun"}
 var gun4 = {delay:15,dmg:30,cooldown:0,typez:"gun",labelg:"sniper"}
 var gun5 = {delay:1,dmg:10,cooldown:100,shottime:50,typez:"gun",labelg:"lazer"}
 var gun6 = {delay:600, dmg:0, cooldown:0,typez:"gun",labelg:"nuke"}
-
+var yourgun = 0
 var skin1 = {typez:"skin",labelg:"earth"}
 //earth
 var skin2 = {typez:"skin",labelg:"water"}
@@ -65,15 +66,58 @@ for(var w = 0; w<12; w++){
 	insertBack(shops, ({x:(c+1)*hspace + c*400, y:(r+1)*vspace+r*400, width:400, height:400,font:40}))
 	
 }
+if(!localStorage.getItem("alert004")){
+	localStorage.alert004 = 1
+	
+	alert("UPDATE 0.0.4: ALL SHOP BUGS FIXED! Buy guns, skins, and it will all save as long as you use the same browser! More info about update 0.0.4 can be found here: https://github.com/SammyAwesome/bubblewars/commits/master")
+}
+if(!localStorage.getItem("gunP2")){
+	localStorage.gunP2 = 0
+}
+if(!localStorage.getItem("gunP3")){
+	localStorage.gunP3 = 0
+}
+if(!localStorage.getItem("gunP4")){
+	localStorage.gunP4 = 0
+}
+if(!localStorage.getItem("gunP5")){
+	localStorage.gunP5 = 0
+}
+if(!localStorage.getItem("gunP6")){
+	localStorage.gunP6 = 0
+}
+if(!localStorage.getItem("skinP2")){
+	localStorage.skinP2 = 0
+}
+if(!localStorage.getItem("skinP3")){
+	localStorage.skinP3 = 0
+}
+if(!localStorage.getItem("skinP4")){
+	localStorage.skinP4 = 0
+}
+if(!localStorage.getItem("skinP5")){
+	localStorage.skinP5 = 0
+}
+if(!localStorage.getItem("skinP6")){
+	localStorage.skinP6 = 0
+}
 shops[1].label = "STANDARD"
 shops[1].price = 0
 shops[1].purchased = true
 shops[2].label = "MACHINE GUN"
 shops[2].price = 50000
-shops[2].purchased = false
+if(localStorage.gunP2 == "0"){
+	shops[2].purchased = false
+}else{
+	shops[2].purchased = true
+}
 shops[3].label = "CANNON"
 shops[3].price = 100000
-shops[3].purchased = false
+if(localStorage.gunP3 == "0"){
+	shops[3].purchased = false
+}else{
+	shops[3].purchased = true
+}
 shops[4].label = "EARTH"
 
 //Well rounded skin!
@@ -81,29 +125,61 @@ shops[4].price = 0
 shops[4].puchased = true
 shops[5].label = "WATER"
 shops[5].price = 50000
-shops[5].purchased = false
+if(localStorage.skinP2 == "0"){
+	shops[5].purchased = false
+}else{
+	shops[5].purchased = true
+}
 //It's really hot outside, 90º!
 shops[6].label = "FIRE"
 shops[6].price = 100000
-shops[6].purchased = false
+if(localStorage.skinP3 == "0"){
+	shops[6].purchased = false
+}else{
+	shops[6].purchased = true
+}
 shops[7].label = "SNIPER"
 shops[7].price = 150000
-shops[7].purchased = false
+if(localStorage.gunP4 == "0"){
+	shops[7].purchased = false
+}else{
+	shops[7].purchased = true
+}
 shops[8].label = "LASER"
 shops[8].price = 300000
-shops[8].purchased = false
+if(localStorage.gunP5 == "0"){
+	shops[8].purchased = false
+}else{
+	shops[8].purchased = true
+}
 shops[9].label = "NUKE"
 shops[9].price = 1000000
-shops[9].purchased = false
+if(localStorage.gunP6 == "0"){
+	shops[9].purchased = false
+}else{
+	shops[9].purchased = true
+}
 shops[10].label = "METAL"
 shops[10].price = 150000
-shops[10].purchased = false
+if(localStorage.skinP4 == "0"){
+	shops[10].purchased = false
+}else{
+	shops[10].purchased = true
+}
 shops[11].label = "AIR"
 shops[11].price = 300000
-shops[11].purchased = false
+if(localStorage.skinP5 == "0"){
+	shops[11].purchased = false
+}else{
+	shops[11].purchased = true
+}
 shops[12].label = "MAGIC"
 shops[12].price = 1000000
-shops[12].purchased = false
+if(localStorage.skinP6 == "0"){
+	shops[12].purchased = false
+}else{
+	shops[12].purchased = true
+}
 //Do or do not, there is no TRI!
 shops[1].item = gun1
 shops[2].item = gun2
@@ -120,6 +196,26 @@ shops[12].item = skin6
 if(!localStorage.getItem("coins")){
 	localStorage.coins = 0
 	
+}
+if(!localStorage.getItem("gun")){
+	localStorage.gun = 1
+}
+//----------------------------------------
+
+if(!localStorage.getItem("gunP2")){
+	localStorage.gunP2 = 0
+}
+if(!localStorage.getItem("gunP3")){
+	localStorage.gunP3 = 0
+}
+if(!localStorage.getItem("gunP4")){
+	localStorage.gunP4 = 0
+}
+if(!localStorage.getItem("gunP5")){
+	localStorage.gunP5 = 0
+}
+if(!localStorage.getItem("gunP6")){
+	localStorage.gunP6 = 0
 }
 //{x:150,y:200,width:400,height:400}, {x:screenWidth/2 -200,y:200,width:400,height:400},{x:screenWidth - 550,y:200,width:400,height:400},
 function onTouchStart(x, y){
@@ -141,9 +237,24 @@ function onTouchStart(x, y){
 					if(shops[i].item.typez == "gun"){
 						if(shops[i].purchased == true){
 								movies[0].gun = shops[i].item
+						//		localStorage.gun = i
 						//		console.log("setting gun "+ i)
 						}else if(coinConvertor() >= shops[i].price){
-						
+							if(shops[i].item == gun2){
+								localStorage.gunP2 = "1"
+							}
+							if(shops[i].item == gun3){
+								localStorage.gunP3 = "1"
+							}
+							if(shops[i].item == gun4){
+								localStorage.gunP4 = "1"
+							}
+							if(shops[i].item == gun5){
+								localStorage.gunP5 = "1"
+							}
+							if(shops[i].item == gun6){
+								localStorage.gunP6 = "1"
+							}
 								movies[0].gun = shops[i].item
 							//	console.log("setting gun "+ i)
 								shops[i].purchased = true
@@ -161,6 +272,21 @@ function onTouchStart(x, y){
 								movies[0].skin = shops[i].item
 						//		console.log("setting skin "+ i)
 						}else if(coinConvertor() >= shops[i].price){
+									if(shops[i].item == skin2){
+										localStorage.skinP2 = "1"
+									}
+									if(shops[i].item == skin3){
+										localStorage.skinP3 = "1"
+									}
+									if(shops[i].item ==skin4){
+										localStorage.skinP4 = "1"
+									}
+									if(shops[i].item == skin5){
+										localStorage.skinP5 = "1"
+									}
+									if(shops[i].item == skin6){
+										localStorage.skinP6 = "1"
+									}
 								movies[0].skin = shops[i].item
 								shops[i].purchased = true
 								localStorage.coins = coinConvertor() - shops[i].price
@@ -201,10 +327,16 @@ function onTouchEnd(x, y){
 	}
 }
 function start(){
-	movies = [{x:0,y:0,r:0,g:1,hp:100,size:45,type:"player",delay:30,gun:gun1,skin:skin1}]
+	if(played == false){
+		movies = [{x:0,y:0,r:0,g:1,hp:100,size:45,type:"player",delay:30,gun:gun1,skin:skin1}]
+		
+	}else{
+		movies = [{x:0,y:0,r:0,g:1,hp:100,size:45,type:"player",delay:30,gun:movies[0].gun,skin:movies[0].skin}]
+	}
 	speedBoost = false
 	nukeMODEz = false
 	nukefound = false
+	played = true
 	for(var i = 0; i < 1000; i++){
 		insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"foold", size:20})
 	
@@ -232,6 +364,22 @@ function onWheel(x,y,dx,dy){
 	
 }
 function onKeyStart(key){
+	if (key == 27) {
+		if(mode == "ingame"){
+			if(kills > mostkills){
+				mostkills = kills
+			}
+			kills = 0
+			if(score > highscore){
+				highscore = score
+			}
+			score = 0
+			coinsmade = 0
+			mode = "home"
+			start()
+			console.log("U DED")
+		}
+	}
 	if(key == 27){
 		mode = "home"
 	}
@@ -300,9 +448,7 @@ function onKeyStart(key){
 	//	console.log(botcount, fooldcount, fooldHPcount, fooldBadcount, tackscount)
 		
 	}
-	if (key == 27) {
-		movies[0].hp = 0
-	}
+	
 	
 
 
@@ -381,14 +527,29 @@ function drawMovies(){
 		case "tack":
 		//	console.log(movies[0].gun.labelg)
 			
-			if(movies[0].gun.labelg != "lazer"){
+			if(movies[0].gun.labelg == "standard"){
 				m.x = m.x + cos(m.t) * 50 * .73	
 				m.y = m.y - sin(m.t) * 50 * .73
 				fillTransformedTriangle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y), makeColor(.5, .5, .5), m.size, m.t)
-			}else{
+			}else if(movies[0].gun.labelg == "lazer"){
 				m.x = m.x + cos(m.t) * 50 * .73	
 				m.y = m.y - sin(m.t) * 50 * .73
 				fillCircle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y),m.size + 5, makeColor(.8,.2,.2))
+			}else if(movies[0].gun.labelg == "cannon"){
+				
+				m.x = m.x + cos(m.t) * 50 * .65	
+				m.y = m.y - sin(m.t) * 50 * .65
+				fillCircle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y),m.size + 20, makeColor(0,0,0))
+			}else if(movies[0].gun.labelg == "machine gun"){
+				m.x = m.x + cos(m.t) * 50 * .73	
+				m.y = m.y - sin(m.t) * 50 * .73
+				fillTransformedTriangle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y), makeColor(.5, .5, .5), m.size - 3, m.t)
+				
+			}else if(movies[0].gun.labelg == "sniper"){
+				m.x = m.x + cos(m.t) * 100 * .73	
+				m.y = m.y - sin(m.t) * 100 * .73
+				fillTransformedTriangle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y), makeColor(.5, .5, .5), m.size +3, m.t)
+				
 			}
 			break;
 		case "bot":
@@ -518,13 +679,13 @@ function detectCollision(){
 								localStorage.coins = coinConvertor() + 20
 								coinsmade = coinsmade + 20
 							}else{
-								movies[0].hp = movies[0].hp + 33
+								movies[0].hp = movies[0].hp + 50
 								m2.dead = true
 								
 							}
 						}
 						if(m2.type == "nuke" && (!m2.dead)){
-							movies[0].hp = 0
+							movies[0].hp = movies[0].hp - 101.216
 						}
 						if(m2.type == "fooldBad" && (! m2.dead)){
 							if(movies[0].hp < 10){
@@ -679,6 +840,23 @@ function onSetup(){
 function coinConvertor(){
 	return parseInt(localStorage.coins)
 }
+//====================================
+function gunConvertor2(){
+	return parseInt(localStorage.gunP2)
+}
+function gunConvertor3(){
+	return parseInt(localStorage.gunP3)
+}
+function gunConvertor4(){
+	return parseInt(localStorage.gunP4)
+}
+function gunConvertor5(){
+	return parseInt(localStorage.gunP5)
+}
+function gunConvertor6(){
+	return parseInt(localStorage.gunP6)
+}
+
 function playerFire(){
 	if(firingMode == "shooting" || firingMode == "reloaded"){
 		if(movies[0].delay>movies[0].gun.delay-1){
@@ -733,6 +911,7 @@ function timerCooldown(){
 	}
 }
 function onTick(){
+	console.log(movies[0].hp)
 	if(mode == "shop"){
 		fillRectangle(0,0, screenWidth, screenHeight, makeColor(.5, .8,  .1))
 		strokeRectangle(0,0, screenWidth, screenHeight, makeColor(0,.3,.15), 30,0)
@@ -775,7 +954,7 @@ function onTick(){
 		fillRectangle(screenWidth / 2 + 350, button1y, 300, 100, makeColor(1, 1, 1), 30)
 		fillText("COINS: " + localStorage.coins, screenWidth / 2 + 500, button1y + 50, makeColor(0, 0, 0), "49pt Baloo Bhaina", "center", "middle")
 		//fillRectangle(mouseX, mouseY, 130,120,makeColor(.92,0,0),20)
-		fillText("Update 0.0.3", 200, screenHeight - 50, makeColor(1, 1, 1), "49pt Baloo Bhaina", "center", "middle")
+		fillText("Update 0.0.4", 200, screenHeight - 50, makeColor(1, 1, 1), "49pt Baloo Bhaina", "center", "middle")
 	}
 	if(movies[0].size < 100){
 		speedBoost = false
@@ -794,8 +973,12 @@ function onTick(){
 			coinsmade = 0
 			mode = "home"
 			start()
+			console.log("U DED")
+			
 		}
 		fillRectangle(0, 0, screenWidth, screenHeight, makeColor(.527, .804, .976))
+		strokeRectangle(screenWidth / 2 +(-11000 -movies[0].x), screenHeight / 2 - (11000 - movies[0].y), 20000, 20000, makeColor(.5,.5,.5), 2000, 20)
+		
 		timerCooldown()
 		playerFire()
 		botCounter()
