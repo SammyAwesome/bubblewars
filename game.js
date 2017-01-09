@@ -4,6 +4,7 @@ var mode = "home"
 var mouseX = 0
 var pi = 3.1415926535897932384626433
 var movies
+var randInt = 0
 var triSize = 1
 var speedBoost = false
 var nukefound = false
@@ -24,6 +25,7 @@ var button2w = 200
 var blueP = 0
 var nukeMODEz = false
 var score = 0
+var level
 var highscore = 0
 var kills = 0
 var mostkills = 0
@@ -42,17 +44,17 @@ var gun4 = {delay:15,dmg:30,cooldown:0,typez:"gun",labelg:"sniper"}
 var gun5 = {delay:1,dmg:10,cooldown:100,shottime:50,typez:"gun",labelg:"lazer"}
 var gun6 = {delay:600, dmg:0, cooldown:0,typez:"gun",labelg:"nuke"}
 var yourgun = 0
-var skin1 = {typez:"skin",labelg:"earth"}
-//earth
-var skin2 = {typez:"skin",labelg:"water"}
-//WATER
-var skin3 = {typez:"skin",labelg:"fire"}
-//FIRE
-var skin4 = {typez:"skin",labelg:"metal"}
-//Metal
-var skin5 = {typez:"skin",labelg:"air"}
-//Air
-var skin6 = {typez:"skin",labelg:"magic"}
+var skin1 = {typez:"skin",labelg:"earth, health bonus",boostHP:1.25,boostSpeed:1,boostDMG:1}
+//earth 1.25x HP BOOST
+var skin2 = {typez:"skin",labelg:"water, speed bonus",boostSpeed:1.25,boostHP:1,boostDMG:1}
+//WATER 1.25x SPEED BOOST
+var skin3 = {typez:"skin",labelg:"fire, damage bonus",boostDMG:1.25,boostHP:1,boostSpeed:1}
+//FIRE 1.25x DMG BOOST
+var skin4 = {typez:"skin",labelg:"metal, improved health bonus",boostHP:1.5,boostSpeed:1,boostDMG:1}
+//Metal 1.5x HP BOOST
+var skin5 = {typez:"skin",labelg:"air, improved speed bonus",boostSpeed:1.6,boostHP:1,boostDMG:1}
+//Air 1.5x HP BOOST
+var skin6 = {typez:"skin",labelg:"magic, improved damage bonus",boostDMG:1.5,boostHP:1,boostSpeed:1}
 //MAGIC
 var totalFoold = 0
 var playerGun = "standard"
@@ -66,10 +68,14 @@ for(var w = 0; w<12; w++){
 	insertBack(shops, ({x:(c+1)*hspace + c*400, y:(r+1)*vspace+r*400, width:400, height:400,font:40}))
 	
 }
+
 if(!localStorage.getItem("alert004")){
 	localStorage.alert004 = 1
 	
 	alert("UPDATE 0.0.4: ALL SHOP BUGS FIXED! Buy guns, skins, and it will all save as long as you use the same browser! More info about update 0.0.4 can be found here: https://github.com/SammyAwesome/bubblewars/commits/master")
+}
+if(!localStorage.getItem("botMAX")){
+	localStorage.botMAX = 12
 }
 if(!localStorage.getItem("gunP2")){
 	localStorage.gunP2 = 0
@@ -101,18 +107,21 @@ if(!localStorage.getItem("skinP5")){
 if(!localStorage.getItem("skinP6")){
 	localStorage.skinP6 = 0
 }
+if(!localStorage.getItem("levelPlayer")){
+	localStorage.levelPlayer = 1
+}
 shops[1].label = "STANDARD"
 shops[1].price = 0
 shops[1].purchased = true
 shops[2].label = "MACHINE GUN"
-shops[2].price = 50000
+shops[2].price = 15000
 if(localStorage.gunP2 == "0"){
 	shops[2].purchased = false
 }else{
 	shops[2].purchased = true
 }
 shops[3].label = "CANNON"
-shops[3].price = 100000
+shops[3].price = 50000
 if(localStorage.gunP3 == "0"){
 	shops[3].purchased = false
 }else{
@@ -124,7 +133,7 @@ shops[4].label = "EARTH"
 shops[4].price = 0
 shops[4].puchased = true
 shops[5].label = "WATER"
-shops[5].price = 50000
+shops[5].price = 15000
 if(localStorage.skinP2 == "0"){
 	shops[5].purchased = false
 }else{
@@ -132,7 +141,7 @@ if(localStorage.skinP2 == "0"){
 }
 //It's really hot outside, 90º!
 shops[6].label = "FIRE"
-shops[6].price = 100000
+shops[6].price = 50000
 if(localStorage.skinP3 == "0"){
 	shops[6].purchased = false
 }else{
@@ -245,9 +254,11 @@ function onTouchStart(x, y){
 							}
 							if(shops[i].item == gun3){
 								localStorage.gunP3 = "1"
+								
 							}
 							if(shops[i].item == gun4){
 								localStorage.gunP4 = "1"
+								
 							}
 							if(shops[i].item == gun5){
 								localStorage.gunP5 = "1"
@@ -255,6 +266,8 @@ function onTouchStart(x, y){
 							if(shops[i].item == gun6){
 								localStorage.gunP6 = "1"
 							}
+								localStorage.botMAX = botMAXConvertor() + 1
+								
 								movies[0].gun = shops[i].item
 							//	console.log("setting gun "+ i)
 								shops[i].purchased = true
@@ -315,6 +328,7 @@ function onTouchStart(x, y){
 	if(mode=="home"){
 		if(x > button1x && x < button1x + button1w && y > button1y && y < button1y + button1h){
 			mode = "ingame"
+			movies[0].hp = 100* movies[0].skin.boostHP
 		}if(x> button2x && x < button2x + button2w && y > button2y && y < button2y + button2h){
 			mode = "shop"
 		}
@@ -328,10 +342,10 @@ function onTouchEnd(x, y){
 }
 function start(){
 	if(played == false){
-		movies = [{x:0,y:0,r:0,g:1,hp:100,size:45,type:"player",delay:30,gun:gun1,skin:skin1}]
+		movies = [{x:0,y:0,r:0,g:1,hp:100*skin1.boostHP,size:45,type:"player",delay:30,gun:gun1,skin:skin1}]
 		
 	}else{
-		movies = [{x:0,y:0,r:0,g:1,hp:100,size:45,type:"player",delay:30,gun:movies[0].gun,skin:movies[0].skin}]
+		movies = [{x:0,y:0,r:0,g:1,hp:100*movies[0].skin.boostHP,size:45,type:"player",delay:30,gun:movies[0].gun,skin:movies[0].skin}]
 	}
 	speedBoost = false
 	nukeMODEz = false
@@ -346,9 +360,19 @@ function start(){
 }
 function timer(s){
 	s.delay++
-	if(s.delay == 30){
-		insertBack(movies, {x:s.x, y:s.y, t:(atan2(movies[0].x - s.x, movies[0].y - s.y) + (3 *pi) /2),type:"botTACK", size:10})
-		s.delay = 0
+	if(s.delay == (s.gun.delay) *2.5){
+		if(s.gun == gun3){
+			insertBack(movies, {x:s.x, y:s.y, t:(atan2(movies[0].x - s.x, movies[0].y - s.y) + (3 *pi) /2),type:"botCANNON", size:10})
+			s.delay = 0
+		}
+		if(s.gun == gun2){
+			insertBack(movies, {x:s.x, y:s.y, t:(atan2(movies[0].x - s.x, movies[0].y - s.y) + (3 *pi) /2),type:"botMACHINE", size:10})
+			s.delay = 0
+		}
+		if(s.gun == gun1){
+			insertBack(movies, {x:s.x, y:s.y, t:(atan2(movies[0].x - s.x, movies[0].y - s.y) + (3 *pi) /2),type:"botTACK", size:10})
+			s.delay = 0
+		}
 	}
 	
 }
@@ -476,7 +500,7 @@ function nukeMODE(){
 			}if(m.type == "fooldBad"){
 				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 5, makeColor(.7,0,0))
 
-			}if(m.type == "botTACK"){
+			}if(m.type == "botTACK" || "botCANNON"){
 				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 1, makeColor(1,0,0))
 
 			}if(m.type == "nuke"){
@@ -515,7 +539,21 @@ function drawMovies(){
 	for (var i = 0; i < movies.length; i++){
 		var m = movies[i]
 		switch(m.type){
+		case "botCANNON":
+				m.x = m.x + cos(m.t) *50 *.65
+				m.y = m.y - sin(m.t) * 50 *.65
+				fillCircle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y),m.size + 20, makeColor(0,0,0))
+				
+			
+			break;
+		case "botMACHINE":
+			m.x = m.x + cos(m.t) * 50 * .73	
+			m.y = m.y - sin(m.t) * 50 * .73
+			fillTransformedTriangle(m.x - movies[0].x + screenWidth / 2, screenHeight / 2 - (m.y - movies[0].y), makeColor(.5, .5, .5), m.size - 3, m.t)
+			
+			break;
 		case "foold":
+		
 			fillCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y), 20, makeColor(1, 1, 1))
 			break;
 		case "fooldHP":
@@ -615,22 +653,22 @@ function drawMovies(){
 			}
 			if(sin(angle)  < 0){
 				if(movies[0].y < 10000){
-					movies[0].y = movies[0].y - sin(angle) *3 / (movies[0].size/300) * zoom
+					movies[0].y = movies[0].y - sin(angle) *3 / (movies[0].size/300) * zoom * movies[0].skin.boostSpeed
 				}
 			}if(sin(angle) > 0){
 				if(movies[0].y > -10000){
-					movies[0].y = movies[0].y - sin(angle) *3 / (movies[0].size/300) * zoom
+					movies[0].y = movies[0].y - sin(angle) *3 / (movies[0].size/300) * zoom * movies[0].skin.boostSpeed
 				}
 			}if(cos(angle)> 0){
 				if(movies[0].x < 10000){
-					movies[0].x = movies[0].x + cos(angle) *3 / (movies[0].size/300) * zoom
+					movies[0].x = movies[0].x + cos(angle) *3 / (movies[0].size/300) * zoom * movies[0].skin.boostSpeed
 				}
 			}if(cos(angle)< 0){
 				if(movies[0].x > -10000){
-					movies[0].x = movies[0].x + cos(angle) *3 / (movies[0].size/300) * zoom
+					movies[0].x = movies[0].x + cos(angle) *3 / (movies[0].size/300) * zoom * movies[0].skin.boostSpeed
 				}
 			}
-			fillText("HP " + round(movies[0].hp * movies[0].size / 30) + "/" + round(100 * movies[0].size / 30),  screenWidth / 2, screenHeight / 2, makeColor(1, 1, 1), "20pt sans-serif", "center")
+			fillText("HP " + round(movies[0].hp * movies[0].size / 30) + "/" + round(100 *movies[0].skin.boostHP * movies[0].size / 30),  screenWidth / 2, screenHeight / 2, makeColor(1, 1, 1), "20pt sans-serif", "center")
 			fillText("Mass " + round(movies[0].size),  screenWidth / 2, screenHeight / 2 + 20, makeColor(1, 1, 1), "20pt sans-serif", "center")
 			break;
 		}
@@ -673,8 +711,8 @@ function detectCollision(){
 							coinsmade = coinsmade + 10
 						}
 						if(m2.type == "fooldHP" && (! m2.dead)){
-							if(movies[0].hp > 50){
-								movies[0].hp = 100
+							if(movies[0].hp > 100*(movies[0].skin.boostHP) - 50){
+								movies[0].hp = 100*(movies[0].skin.boostHP)
 								m2.dead = true
 								localStorage.coins = coinConvertor() + 20
 								coinsmade = coinsmade + 20
@@ -703,6 +741,14 @@ function detectCollision(){
 							movies[0].hp = movies[0].hp - 450 / m1.size
 							m2.dead=true
 						}
+						if(m2.type == "botCANNON" && (!m2.dead)){
+							movies[0].hp = movies[0].hp - 9000 / m1.size
+							m2.dead=true
+						}
+						if(m2.type == "botMACHINE" && (!m2.dead)){
+							movies[0].hp = movies[0].hp - 450 *.4 / m1.size
+							m2.dead=true
+						}
 					}
 				}
 			}
@@ -712,7 +758,8 @@ function detectCollision(){
 				if(sqrt(pow(m1.x - m2.x, 2) + pow(m1.y - m2.y, 2)) < m1.size + m2.size){
 					if(i != j){
 						if(m2.type == "tack" && (! m2.dead)){
-							m1.hp = m1.hp - movies[0].gun.dmg/m1.size*50
+							
+							m1.hp = m1.hp - movies[0].gun.dmg*movies[0].skin.boostDMG/m1.size*50
 							m2.dead = true
 							if(m1.hp <= 0){
 								m1.dead = true
@@ -841,21 +888,10 @@ function coinConvertor(){
 	return parseInt(localStorage.coins)
 }
 //====================================
-function gunConvertor2(){
-	return parseInt(localStorage.gunP2)
+function botMAXConvertor(){
+	return parseInt(localStorage.botMAX)
 }
-function gunConvertor3(){
-	return parseInt(localStorage.gunP3)
-}
-function gunConvertor4(){
-	return parseInt(localStorage.gunP4)
-}
-function gunConvertor5(){
-	return parseInt(localStorage.gunP5)
-}
-function gunConvertor6(){
-	return parseInt(localStorage.gunP6)
-}
+
 
 function playerFire(){
 	if(firingMode == "shooting" || firingMode == "reloaded"){
@@ -911,6 +947,7 @@ function timerCooldown(){
 	}
 }
 function onTick(){
+	
 	console.log(movies[0].hp)
 	if(mode == "shop"){
 		fillRectangle(0,0, screenWidth, screenHeight, makeColor(.5, .8,  .1))
@@ -954,12 +991,20 @@ function onTick(){
 		fillRectangle(screenWidth / 2 + 350, button1y, 300, 100, makeColor(1, 1, 1), 30)
 		fillText("COINS: " + localStorage.coins, screenWidth / 2 + 500, button1y + 50, makeColor(0, 0, 0), "49pt Baloo Bhaina", "center", "middle")
 		//fillRectangle(mouseX, mouseY, 130,120,makeColor(.92,0,0),20)
-		fillText("Update 0.0.4", 200, screenHeight - 50, makeColor(1, 1, 1), "49pt Baloo Bhaina", "center", "middle")
+		//fillRectangle(screenWidth / 2 + 350, button1y, 300, 100, makeColor(1, 1, 1), 30)
+	//	strokeRectangle(200, button1y +120, 1000, 70, makeColor(0, 0, 0), 20,60)
+	//	fillRectangle(200, button1y +120, 1000, 70, makeColor(.5, .8, 0), 60)
+		
+	//	fillText("Level: " + localStorage.levelPlayer, button1x + button1w / 2, button1y + 100, makeColor(1, 1, 1), "58pt Baloo Bhaina", "center", "top")
+		
+		
+		fillText("Update 0.0.5", 200, screenHeight - 50, makeColor(1, 1, 1), "49pt Baloo Bhaina", "center", "middle")
 	}
 	if(movies[0].size < 100){
 		speedBoost = false
 	}
 	if(mode == "ingame"){
+		
 		if(movies[0].hp <= 0){
 			
 			if(kills > mostkills){
@@ -1040,8 +1085,19 @@ function onTick(){
 			insertBack(movies, {x:randomReal(-10000,10000), y:randomReal(-10000,10000), type:"fooldHP", size:20})
 		}
 		if(randomInteger(0,50) == 17){
-			if(totalBots < 11){
-				insertBack(movies, {x:randomReal(-10000, 10000), y:randomReal(-10000, 10000), size:45, type:"bot", hp:100, r:0, g:1, angle:randomReal(0, 2 * pi), delay:0})
+			if(totalBots < botMAXConvertor(localStorage.botMAX)){
+				randInt = randomInteger(0,5)
+				console.log(randInt)
+				if(randInt == 0){
+					insertBack(movies, {x:randomReal(-10000, 10000), y:randomReal(-10000, 10000), size:45, type:"bot", hp:100, r:0, g:1, angle:randomReal(0, 2 * pi), delay:0,gun:gun3})
+				//	console.log("hi there")
+				}else if(randInt == 1){
+					insertBack(movies, {x:randomReal(-10000, 10000), y:randomReal(-10000, 10000), size:45, type:"bot", hp:100, r:0, g:1, angle:randomReal(0, 2 * pi), delay:0,gun:gun2})
+				//	console.log("bye there")
+				}else{
+					insertBack(movies, {x:randomReal(-10000, 10000), y:randomReal(-10000, 10000), size:45, type:"bot", hp:100, r:0, g:1, angle:randomReal(0, 2 * pi), delay:0,gun:gun1})
+					
+				}
 			}
 		}
 	}
