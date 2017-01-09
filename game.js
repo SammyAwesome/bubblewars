@@ -490,7 +490,14 @@ function nukeMODE(){
 			var m = movies[i] 
 			if(m.type == "bot"){
 				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 10, makeColor(m.r, m.g, 0))
-
+				if(m.gun == gun2){
+					strokeCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 8, makeColor(0, 0, 0),1)
+					
+				}else if(m.gun == gun3){
+					strokeCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 8, makeColor(0, 0, 0),1)
+					strokeCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 6, makeColor(0, 0, 0),1)
+					
+				}
 			}if(m.type == "foold"){
 				fillCircle((m.x / (20000/mmWidth)) +(mmWidth)/2 +(screenWidth - mmWidth)/2, -m.y / (20000/mmWidth) + screenHeight - mmHeight / 2, 5, makeColor(1,1,1))
 
@@ -591,6 +598,7 @@ function drawMovies(){
 			}
 			break;
 		case "bot":
+		
 			botAI(m)
 			m.angle = (m.angle + randomReal(-pi/8,pi/8)) % (2 * pi)
 			if(sin(m.angle) < 0){
@@ -613,6 +621,19 @@ function drawMovies(){
 			rainbowP(m)
 			strokeCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y),(m.size), makeColor(m.r - .1, m.g - .1, 0), 10)
 			fillCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y),(m.size), makeColor(m.r, m.g, 0))
+			
+			if(m.gun == gun1){
+				
+			}else if(m.gun == gun2){
+				strokeCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y),(m.size) - 10, makeColor(0,0,0), 10)
+				
+			}else if(m.gun == gun3){
+				strokeCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y),(m.size)- 10, makeColor(0,0,0), 5)
+				strokeCircle(screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y),(m.size)- 20, makeColor(0,0,0), 5)
+				
+			}
+			fillText(m.gun.labelg, screenWidth / 2 + (m.x - movies[0].x), screenHeight / 2 - (m.y - movies[0].y), makeColor(1, 1, 1), "30pt Baloo Bhaina")
+			
 			break;
 		case "botTACK":
 			m.x = m.x + cos(m.t) *50 
@@ -863,7 +884,14 @@ function drawMiniMap(){
 		var m = movies[i] 
 		if(m.type == "bot"){
 			fillCircle(m.x / 50 + screenWidth - mmWidth / 2, -m.y / 50 + screenHeight - mmHeight / 2, 5, makeColor(m.r, m.g, 0))
-			
+			if(m.gun == gun2){
+				strokeCircle(m.x / 50 + screenWidth - mmWidth / 2, -m.y / 50 + screenHeight - mmHeight / 2, 3, makeColor(0, 0, 0),1)
+				
+			}else if(m.gun == gun3){
+				strokeCircle(m.x / 50 + screenWidth - mmWidth / 2, -m.y / 50 + screenHeight - mmHeight / 2, 3, makeColor(0, 0, 0),1)
+				strokeCircle(m.x / 50 + screenWidth - mmWidth / 2,-m.y / 50 + screenHeight - mmHeight / 2, 2, makeColor(0, 0, 0),1)
+				
+			}
 		}if(m.type == "foold"){
 			fillCircle(m.x / 50 + screenWidth - mmWidth / 2, -m.y / 50 + screenHeight - mmHeight / 2, 2, makeColor(1,1,1))
 			
